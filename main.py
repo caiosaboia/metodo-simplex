@@ -28,9 +28,9 @@ var x2 >= 0;
 
 maximize z:     8*x1 + 4*x2;
 
-subject to c1: 3*x1 +  x2 <= 7;
-subject to c2:   x1 +  x2 <= 5;
-subject to c3:   x1       <= 2;
+subject to c1: 3*x1 +  x2 + <= 7;
+subject to c2:   x1 +  x2   <= 5;
+subject to c3:   x1         <= 2;
 
 end;
 '''
