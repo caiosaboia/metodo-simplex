@@ -28,33 +28,26 @@ var x2 >= 0;
 
 maximize z:     8*x1 + 4*x2;
 
-subject to c1: 3*x1 +  x2   <= 7;
-subject to c2:   x1 +  x2   <= 5;
-subject to c3:   x1         <= 2;
+subject to c1: 3*x1 +  x2 <= 7;
+subject to c2:   x1 +  x2 <= 5;
+subject to c3:   x1       <= 2;
 
 end;
 '''
 
-#problema original
-c = np.array([ -8, -4])
+c = np.array([ -8,-4])
 A = np.array([[ 3, 1],
               [ 1, 1],
               [ 1, 0]])
 b = np.array([[7], [5], [2]])
 (m,n) = A.shape
 
-#problema alterado com var de folga
-identidade = np.eye(m)
-A_nova = np.hstack((A, identidade))
-c_nova = np.hstack((c,np.zeros(A_nova.shape[1]- len(c))))
-(p,q) = A_nova.shape #novo
-
 print(f"Problema com {m} linhas e {n} colunas.\n")
 
 # ------------------------------------------------------------------------------------------------------
 # Base inicial
-B = list(range(q-p,q))
-N = list(range(q-p))
+B = list(range(n-m,n))
+N = list(range(n-m))
 
 iteracao = 0
 
@@ -64,10 +57,10 @@ while True:
     
     # ------------------------------------------------------------------------------------------------------
     # Particao em torno de variaveis basicas e nao-basicas.
-    AB = A_nova[:,B]
-    AN = A_nova[:,N]
-    cB = c_nova[B]
-    cN = c_nova[N]
+    AB = A[:,B]
+    AN = A[:,N]
+    cB = c[B]
+    cN = c[N]
 
     # ------------------------------------------------------------------------------------------------------
     # Dados do dicionario
@@ -84,11 +77,6 @@ while True:
     print(D)
 
     # ------------------------------------------------------------------------------------------------------
-    # Verifica se há índices em B que não correspondem às colunas da matriz original A
-    indices_invalidos = [var for var in B if var >= n]
-    if indices_invalidos:
-        print(f"Variáveis básicas em B que não correspondem a colunas em A: {indices_invalidos}")
-
     # Determinar a variavel de entrada
     candidatas = [(N[i], i, custo) for (i,custo) in enumerate(cr) if custo <= -TOL]
     if len(candidatas) == 0:
