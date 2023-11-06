@@ -1,24 +1,7 @@
-# UFC/DEMA, Programacao Linear, 2023.2
-# Um implementacao (limitada e ineficiente) do metodo Simplex.
-#
-# "Incompleta" porque nao realiza a primeira fase do algoritmo. Em vez disso,
-# simplesmente assume que a submatriz formada pelas ultimas m linhas e'
-# nao-singular e que a base associada a tal matriz e' viavel (ambas as hipoteses
-# nao sao verdadeiras no caso geral).
-#
-# "Ineficiente" porque a cada iteracao a submatriz correspondente 'a base atual e'
-# explicitamente invertida, o que e' um processo computacionalmente caro. Em vez
-# disso, o algoritmo podeeria calcular o proximo dicionario sem explicitamente
-# inverter a matriz AB.
-#
-# Corrigir estas duas limitacoes do codigo e' sugerido como exercicio.
-
 import numpy as np
 
 TOL = 1e-6 # Constante para comparacoes aproximadas com zero.
 
-# Dados do problema.
-# Forma padrao: min <c,x> s.a Ax=b, x>=0.
 
 '''
 Formato para o site https://online-optimizer.appspot.com/?model=builtin:default.mod :
@@ -34,15 +17,42 @@ subject to c3:   x1       <= 2;
 
 end;
 '''
+# Exemplo Que nao precisa de var artificial
+# c = np.array([ -8, -4, 0, 0, 0])
+# A = np.array([[ 3, 1, 1, 0, 0],
+#               [ 1, 1, 0, 1, 0],
+#               [ 1, 0, 0, 0, 1]])
+# b = np.array([[7], [5], [2]])
 
-c = np.array([ -8, -4, 0, 0, 0])
-A = np.array([[ 3, 1, 1, 0, 0],
-              [ 1, 1, 0, 1, 0],
-              [ 1, 0, 0, 0, 1]])
-b = np.array([[7], [5], [2]])
+
+# Exemplo Que PRECISA de var artificial
+c = np.array([ -6, 1, 0,  0])
+A = np.array([[ 4, 1, 1,  0],
+              [ 2, 3, 0, -1],
+              [-1, 1, 0,  0]])
+b = np.array([[21], [13], [1]])
+
 (m,n) = A.shape
 
 print(f"Problema com {m} linhas e {n} colunas.\n")
+
+# Verificar se as n últimas colunas de A são aproximadamente uma matriz identidade
+matriz_identidade = np.eye(m, m)
+ultimas_colunas_A = A[:, -m:]
+
+if np.allclose(matriz_identidade, ultimas_colunas_A, atol=TOL):
+    print("As últimas colunas de A formam uma boa base.")
+else:
+    print("As últimas colunas de A NÃO formam uma boa base.")
+    A_nova = nova_matriz = np.hstack((A, np.eye(m)))
+    c_artificial = np.zeros(n)
+    c_artificial = np.hstack((c_artificial, np.ones(m)))
+    c = c_artificial
+    A = A_nova
+    (m,n) = A_nova.shape
+    
+
+print("")
 
 # ------------------------------------------------------------------------------------------------------
 # Base inicial
@@ -51,8 +61,9 @@ N = list(range(n-m))
 
 iteracao = 0
 
+
 while True:
-    
+
     iteracao += 1 # Aumentamos o contador de iteracoes. A primeira iteracao e' contada com <iteracao>=1.
     
     # ------------------------------------------------------------------------------------------------------
@@ -75,6 +86,12 @@ while True:
     D = np.block([[xB, -AB_1AN], [z, cr]]) # Parte do dicionario
     print("Dicionario:")
     print(D)
+    print("")
+    
+    #Verifica quais sao originais
+    originais_de_A = [v for v in B if v > m]
+    print(f"Variáveis Artificias em B: {originais_de_A}")
+
 
     # ------------------------------------------------------------------------------------------------------
     # Determinar a variavel de entrada
@@ -94,6 +111,7 @@ while True:
     if len(candidatas) == 0:
         print("Problema ilimitado.")
         break
+
 
     # Escolher a variavel de indice minimo dentre aquelas que atingem a razao minima entre o valor da
     # variavel basica e o negativo do valor do pivo. Remeta-se ao conceito de "teste da razao" para
