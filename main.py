@@ -28,7 +28,7 @@ var x2 >= 0;
 
 maximize z:     8*x1 + 4*x2;
 
-subject to c1: 3*x1 +  x2 + <= 7;
+subject to c1: 3*x1 +  x2   <= 7;
 subject to c2:   x1 +  x2   <= 5;
 subject to c3:   x1         <= 2;
 
@@ -43,7 +43,7 @@ A = np.array([[ 3, 1],
 b = np.array([[7], [5], [2]])
 (m,n) = A.shape
 
-#problema alterado
+#problema alterado com var de folga
 identidade = np.eye(m)
 A_nova = np.hstack((A, identidade))
 c_nova = np.hstack((c,np.zeros(A_nova.shape[1]- len(c))))
