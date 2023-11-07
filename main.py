@@ -36,7 +36,7 @@ b = np.array([[21], [13], [1]])
 
 print(f"Problema com {m} linhas e {n} colunas.\n")
 
-# Verificar se as n últimas colunas de A são aproximadamente uma matriz identidade
+# Verificar se as n últimas colunas de A formam uma boa base inicial
 matriz_identidade = np.eye(m, m)
 ultimas_colunas_A = A[:, -m:]
 
