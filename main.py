@@ -23,12 +23,10 @@ b = np.array([[21], [13], [1]])
 
 print(f"Problema com {m} linhas e {n} colunas.\n")
 
-<<<<<<< HEAD
-=======
 # Verificar se as n últimas colunas de A formam uma boa base inicial
 matriz_identidade = np.eye(m, m)
 ultimas_colunas_A = A[:, -m:]
->>>>>>> 9055eb34a2f45312987c562b86123ecb8cea1c95
+
 
 
 matriz_identidade = np.eye(m, m) #criamos uma matriz identidade para compararmos à uma base boa
