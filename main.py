@@ -2,21 +2,8 @@ import numpy as np
 
 TOL = 1e-6 # Constante para comparacoes aproximadas com zero.
 
+#Devemos levar em consideracao que o nosso vetor b sempre será possitivo, por isso, devemos escrever de forma adequada na entrada dos valores.
 
-'''
-Formato para o site https://online-optimizer.appspot.com/?model=builtin:default.mod :
-
-var x1 >= 0;
-var x2 >= 0;
-
-maximize z:     8*x1 + 4*x2;
-
-subject to c1: 3*x1 +  x2 <= 7;
-subject to c2:   x1 +  x2 <= 5;
-subject to c3:   x1       <= 2;
-
-end;
-'''
 # Exemplo Que nao precisa de var artificial
 # c = np.array([ -8, -4, 0, 0, 0])
 # A = np.array([[ 3, 1, 1, 0, 0],
@@ -36,20 +23,25 @@ b = np.array([[21], [13], [1]])
 
 print(f"Problema com {m} linhas e {n} colunas.\n")
 
-# Verificar se as n últimas colunas de A são aproximadamente uma matriz identidade
-matriz_identidade = np.eye(m, m)
-ultimas_colunas_A = A[:, -m:]
 
+
+matriz_identidade = np.eye(m, m) #criamos uma matriz identidade para compararmos à uma base boa
+ultimas_colunas_A = A[:, -m:] #E aqui serao as colunas na qual vamos comparar
+
+
+
+
+# Verificar se as n últimas colunas de A são uma boa base ou nao
 if np.allclose(matriz_identidade, ultimas_colunas_A, atol=TOL):
-    print("As últimas colunas de A formam uma boa base.")
+    print("As últimas colunas de A formam uma boa base.") #caso sim, ela percorre o código original normalmente
 else:
-    print("As últimas colunas de A NÃO formam uma boa base.")
-    A_nova = nova_matriz = np.hstack((A, np.eye(m)))
-    c_artificial = np.zeros(n)
-    c_artificial = np.hstack((c_artificial, np.ones(m)))
-    c = c_artificial
-    A = A_nova
-    (m,n) = A_nova.shape
+    print("As últimas colunas de A NÃO formam uma boa base.") #caso nao...
+    A_nova = nova_matriz = np.hstack((A, np.eye(m))) #criamos uma nova matriz com as var artificias
+    c_artificial = np.zeros(n)  #um novo c
+    c_artificial = np.hstack((c_artificial, np.ones(m))) #e adicionamos ao c nossas var atificias
+    c = c_artificial        #aqui é meramente para manter a sintaxe do código
+    A = A_nova              #aqui o mesmo
+    (m,n) = A_nova.shape    #o mesmo
     
 
 print("")
@@ -61,6 +53,8 @@ N = list(range(n-m))
 
 iteracao = 0
 
+
+#Aqui abaixo o código corre normamente, exceto por uma acrescimo(line 85) para mostrarmos quais var na Base sao artificias.
 
 while True:
 
